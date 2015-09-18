@@ -105,7 +105,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
     
     // Set the cap width
     _capWidth = 16.0f;
-	
+    
 	// Setup the default text attributes
 	NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
 	paragraphStyle.alignment = NSTextAlignmentCenter;
