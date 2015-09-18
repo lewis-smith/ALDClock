@@ -102,6 +102,9 @@ const CGFloat kALDClockAnimationIncrement = 30;
 	// Set the border properties
 	_borderWidth = 9.0f;
 	_borderColor = [UIColor blackColor];
+    
+    // Set the cap width
+    _capWidth = 16.0f;
 	
 	// Setup the default text attributes
 	NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
@@ -576,11 +579,14 @@ const CGFloat kALDClockAnimationIncrement = 30;
     // -- Draw the centre cap  --
     // --------------------------
     
+    
+    CGFloat halfCap = _capWidth / 2;
+    
     CGContextSetFillColorWithColor(context, self.minuteHandColor.CGColor);
-    CGContextFillEllipseInRect(context, CGRectMake(CGRectGetMidX(rectForClockFace)-8,
-                                                   CGRectGetMidY(rectForClockFace)-8,
-                                                   16,
-                                                   16)
+    CGContextFillEllipseInRect(context, CGRectMake(CGRectGetMidX(rectForClockFace)-halfCap,
+                                                   CGRectGetMidY(rectForClockFace)-halfCap,
+                                                   _capWidth,
+                                                   _capWidth)
                                );
     
     // --------------------------

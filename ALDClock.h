@@ -155,6 +155,11 @@
 @property (nonatomic, assign) CGFloat borderWidth;
 
 /**
+ Width of the cap
+ */
+@property (nonatomic, assign) CGFloat capWidth;
+
+/**
  Describes whether the clock is showing an AM or PM time
  */
 @property (nonatomic, assign, readonly) BOOL isAM;
