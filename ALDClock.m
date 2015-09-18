@@ -272,7 +272,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
 - (BOOL)shouldSnapToTargetRotation
 {
     // If we're within 1 increment, we should snap to the target
-    if(abs(self.targetRotation - self.totalRotation) < kALDClockAnimationIncrement)
+    if(fabs(self.targetRotation - self.totalRotation) < kALDClockAnimationIncrement)
         return YES;
     else
         return NO;
@@ -566,8 +566,8 @@ const CGFloat kALDClockAnimationIncrement = 30;
     CGContextMoveToPoint(context, center.x, center.y );
     
     // Get the location of the end of the hand
-    CGFloat minuteHandX = center.x + 0.90*self.radius * cos((M_PI/180)*minuteHandAngle);
-    CGFloat minuteHandY = center.y + - 1 * 0.90*self.radius * sin((M_PI/180)*minuteHandAngle);
+    CGFloat minuteHandX = center.x + 1.2*self.radius * cos((M_PI/180)*minuteHandAngle);
+    CGFloat minuteHandY = center.y + - 1 * 1.2*self.radius * sin((M_PI/180)*minuteHandAngle);
     
     // Move to the end of the hand
     CGContextAddLineToPoint(context, minuteHandX, minuteHandY);
