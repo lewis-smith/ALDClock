@@ -35,8 +35,6 @@ typedef struct{
 
 @interface ALDClock ()
 @property (nonatomic, assign) CGFloat totalRotation;
-@property (nonatomic, assign) CGFloat radius;
-@property (nonatomic, strong) UIColor *clockFaceBackgroundColor;
 @property (nonatomic, assign) BOOL isAnimating;
 @property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, assign) CGFloat targetRotation;
@@ -49,6 +47,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
+    NSLog(@"Clock: initWithCoder");
 	self = [super initWithCoder:aDecoder];
 	if (self) {
 		[self commonInit];
@@ -58,6 +57,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
+    NSLog(@"Clock: initWithFrame");
     self = [super initWithFrame:frame];
     if (self) {
         [self commonInit];
@@ -76,7 +76,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
 	_totalRotation = 0;
 	
 	// How wide should the clock be?
-	[self updateRadius];
+//	[self updateRadius];
 	
 	// Theminute hand can move smoothly or at second intervals.
 	_minuteHandMovesSmoothly = NO;
@@ -120,17 +120,6 @@ const CGFloat kALDClockAnimationIncrement = 30;
 	_digitAttributes = @{NSForegroundColorAttributeName : [UIColor colorWithWhite:0.0 alpha:1.0],
 						 NSParagraphStyleAttributeName: paragraphStyle,
 						 NSFontAttributeName : [UIFont systemFontOfSize:16.0f]};
-}
-
-- (void)updateRadius
-{
-    _radius = MIN(CGRectGetWidth(self.frame)/2.0f, CGRectGetHeight(self.frame)/2.0f) - 20;
-}
-
-- (void)setFrame:(CGRect)frame
-{
-    [super setFrame:frame];
-    [self updateRadius];
 }
 
 #pragma mark - Public Methods
@@ -234,15 +223,15 @@ const CGFloat kALDClockAnimationIncrement = 30;
 	[self setNeedsDisplay];
 }
 
-- (void)setBackgroundColor:(UIColor *)backgroundColor
-{
-    // As we always want the background of this view to be
-    // clear, we override this default method an make it
-    // change the background colour of the clock instead.
-    
-    self.clockFaceBackgroundColor = backgroundColor;
-    [self setNeedsDisplay];
-}
+//- (void)setBackgroundColor:(UIColor *)backgroundColor
+//{
+//    // As we always want the background of this view to be
+//    // clear, we override this default method an make it
+//    // change the background colour of the clock instead.
+//    NSLog(@"Setting background color to %@", backgroundColor);
+//    self.clockFaceBackgroundColor = backgroundColor;
+//    [self setNeedsDisplay];
+//}
 
 #pragma mark - Animation Methods
 
@@ -392,6 +381,30 @@ const CGFloat kALDClockAnimationIncrement = 30;
 
 - (void)drawRect:(CGRect)rect
 {
+    if (rect.size.width <= 40) {
+        // Hack for if the user moves a cell in the table off the screen
+        self.hourHandThickness = self.minuteHandThickness = 0.75f;
+        
+        self.capWidth = 2.0f;
+        self.markingsInset = 0.5f;
+        self.digitAttributes = @{
+                              NSForegroundColorAttributeName : self.digitAttributes[NSForegroundColorAttributeName],
+                              NSParagraphStyleAttributeName: self.digitAttributes[NSParagraphStyleAttributeName],
+                              NSFontAttributeName : [UIFont systemFontOfSize:4.0f]};
+    } else {
+        self.hourHandThickness = self.minuteHandThickness = 1.5f;
+        
+        self.capWidth = 4.0f;
+        self.markingsInset = 1.0f;
+        self.digitAttributes = @{
+                             NSForegroundColorAttributeName : self.digitAttributes[NSForegroundColorAttributeName],
+                             NSParagraphStyleAttributeName: self.digitAttributes[NSParagraphStyleAttributeName],
+                             NSFontAttributeName : [UIFont systemFontOfSize:8.0f]};
+
+    }
+    
+    
+    NSLog(@"drawing rect for %@", self);
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGPoint center = CGPointMake(self.frame.size.width/2.0f, self.frame.size.height/2.0f);
     
@@ -399,6 +412,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
     // bounded by a square box
     
     CGFloat maxWidth = MIN(self.frame.size.width, self.frame.size.height);
+    UIFont *digitFont = self.digitAttributes[NSFontAttributeName];
     
     // Create a rect that maximises the area of the clock in the
     // square box
@@ -413,6 +427,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
     // --------------------------
     
     // Draw the clock background
+    NSLog(@"background color: %@", self.clockFaceBackgroundColor.CGColor);
     CGContextSetFillColorWithColor(context, self.clockFaceBackgroundColor.CGColor);
     CGContextFillEllipseInRect(context, rectForClockFace);
     
@@ -518,6 +533,9 @@ const CGFloat kALDClockAnimationIncrement = 30;
                 withAttributes:self.digitAttributes];
     }
     
+    CGFloat radius = rectForClockFace.size.width/2.0f - digitFont.lineHeight/2.0f - self.markingsInset - MAX(self.majorMarkingLength, self.minorMarkingLength);
+    
+    
     // --------------------------
     // --  Draw the hour hand  --
     // --------------------------
@@ -536,8 +554,8 @@ const CGFloat kALDClockAnimationIncrement = 30;
     CGContextMoveToPoint(context, center.x, center.y);
     
     // Get the location of the end of the hand
-    CGFloat hourHandX = center.x + (0.6*self.radius) * cos((M_PI/180)*hourHandAngle);
-    CGFloat hourHandY = center.y + - 1 * (0.6*self.radius) * sin((M_PI/180)*hourHandAngle);
+    CGFloat hourHandX = center.x + (0.5*radius) * cos((M_PI/180)*hourHandAngle);
+    CGFloat hourHandY = center.y + - 1 * (0.5*radius) * sin((M_PI/180)*hourHandAngle);
     
     // Move to the end of the hand
     CGContextAddLineToPoint(context, hourHandX, hourHandY);
@@ -566,8 +584,8 @@ const CGFloat kALDClockAnimationIncrement = 30;
     CGContextMoveToPoint(context, center.x, center.y );
     
     // Get the location of the end of the hand
-    CGFloat minuteHandX = center.x + 1.2*self.radius * cos((M_PI/180)*minuteHandAngle);
-    CGFloat minuteHandY = center.y + - 1 * 1.2*self.radius * sin((M_PI/180)*minuteHandAngle);
+    CGFloat minuteHandX = center.x + 0.95*radius * cos((M_PI/180)*minuteHandAngle);
+    CGFloat minuteHandY = center.y + - 1 * 0.95*radius * sin((M_PI/180)*minuteHandAngle);
     
     // Move to the end of the hand
     CGContextAddLineToPoint(context, minuteHandX, minuteHandY);
@@ -635,7 +653,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%02d:%02d, isAM:%d, isAnimating:%d", (int)self.hour, (int)self.minute, self.isAM, self.isAnimating];
+    return [NSString stringWithFormat:@"<%p> %02d:%02d, isAM:%d, isAnimating:%d", self, (int)self.hour, (int)self.minute, self.isAM, self.isAnimating];
 }
 
 #pragma mark - Custom Setters
@@ -699,6 +717,10 @@ const CGFloat kALDClockAnimationIncrement = 30;
 - (NSInteger)minuteOffset
 {
     return floor(self.secondsFromGMT/(60.0f)) - 60*self.hourOffset;
+}
+
+-(void)dealloc {
+    NSLog(@"clock dealloced");
 }
 
 @end

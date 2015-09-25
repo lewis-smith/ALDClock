@@ -88,6 +88,12 @@
  */
 @property (nonatomic, assign) BOOL minuteHandMovesSmoothly;
 
+
+/**
+ Clockface background color
+ */
+@property (nonatomic, strong) UIColor *clockFaceBackgroundColor;
+
 /**
  The color of the major markings (the hours markers)
  */
