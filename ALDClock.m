@@ -47,7 +47,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
-    NSLog(@"Clock: initWithCoder");
+//    NSLog(@"Clock: initWithCoder");
 	self = [super initWithCoder:aDecoder];
 	if (self) {
 		[self commonInit];
@@ -57,7 +57,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    NSLog(@"Clock: initWithFrame");
+//    NSLog(@"Clock: initWithFrame");
     self = [super initWithFrame:frame];
     if (self) {
         [self commonInit];
@@ -404,7 +404,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
     }
     
     
-    NSLog(@"drawing rect for %@", self);
+//    NSLog(@"drawing rect for %@", self);
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGPoint center = CGPointMake(self.frame.size.width/2.0f, self.frame.size.height/2.0f);
     
@@ -427,7 +427,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
     // --------------------------
     
     // Draw the clock background
-    NSLog(@"background color: %@", self.clockFaceBackgroundColor.CGColor);
+//    NSLog(@"background color: %@", self.clockFaceBackgroundColor.CGColor);
     CGContextSetFillColorWithColor(context, self.clockFaceBackgroundColor.CGColor);
     CGContextFillEllipseInRect(context, rectForClockFace);
     
